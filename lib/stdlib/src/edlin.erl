@@ -215,6 +215,8 @@ key_map($\177, meta) -> backward_kill_word;
 key_map($[, meta) -> meta_left_sq_bracket;
 key_map($D, meta_left_sq_bracket) -> backward_char;
 key_map($C, meta_left_sq_bracket) -> forward_char;
+key_map($H, meta_left_sq_bracket) -> beginning_of_line;
+key_map($F, meta_left_sq_bracket) -> end_of_line;
 % support a few <CTRL>+<CURSOR LEFT|RIGHT> combinations...
 %  - forward:  \e\e[C, \e[5C, \e[1;5C
 %  - backward: \e\e[D, \e[5D, \e[1;5D
