@@ -33,7 +33,7 @@ start(Drv, Shell, Options) ->
 server(Drv, Shell, Options) ->
     process_flag(trap_exit, true),
     edlin:init(),
-    put(line_buffer, proplists:get_value(line_buffer, Options, [])),
+    put(line_buffer, proplists:get_value(line_buffer, Options, read_hist())),
     put(read_mode, list),
     put(user_drv, Drv),
     put(expand_fun,
@@ -786,7 +786,27 @@ save_line_buffer(Line, Lines) ->
     save_line_buffer([Line|Lines]).
 
 save_line_buffer(Lines) ->
+    case hist_file() of
+        none -> ok;
+        F -> file:write_file(F, term_to_binary(Lines))
+    end,
     put(line_buffer, Lines).
+
+hist_file() ->
+    case init:get_argument(home) of
+        {ok, [[Home]]} ->
+        filename:join(Home, ".erlang.history");
+     _ -> none
+    end.
+
+read_hist() ->
+    case hist_file() of
+        none -> [];
+        F -> case file:read_file(F) of
+                  {ok, Bin}  -> binary_to_term(Bin);
+                  _ -> []
+              end
+    end.
 
 search_up_stack(Stack, Substr) ->
     case up_stack(Stack) of
